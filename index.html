@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Essai de Montre Virtuelle en RA</title>
+    <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>ESSAI DE MONTRE VIRTUELLE EN RA</h1>
+        <p>Essayez virtuellement des montres sur votre poignet</p>
+        <p class="qr-hint">📱 Scannez le QR code pour essayer sur votre téléphone</p>
+    </div>
+
+    <div class="container">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="canvas"></canvas>
+        <div id="loading">Chargement de la caméra et du modèle 3D...</div>
+        <div id="status">👋 Montrez votre poignet à la caméra</div>
+    </div>
+
+    <div class="gallery">
+        <button class="watch-btn active" onclick="selectWatch(0)">Modèle 1</button>
+        <button class="watch-btn" onclick="selectWatch(1)">Modèle 2</button>
+        <button class="watch-btn" onclick="selectWatch(2)">Modèle 3</button>
+    </div>
+
+    <div class="compatibility">
+        <h3>Compatibilité des appareils et des navigateurs</h3>
+        <p>iPadOS : Safari v17.4+ | MacOS : Safari v14+ / Chrome v100+</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.128.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.128.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
