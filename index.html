@@ -1,13 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta http-equiv="Permissions-Policy" content="camera=*">
     <title>Essai de Montre Virtuelle en RA</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
-        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        *,
+        *::before,
+        *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
         :root {
             --gold: #c9a84c;
@@ -29,7 +38,7 @@
         header {
             padding: 28px 24px 20px;
             text-align: center;
-            border-bottom: 1px solid rgba(201,168,76,0.15);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
             background: linear-gradient(180deg, #0d0d14 0%, transparent 100%);
         }
 
@@ -60,8 +69,8 @@
             overflow: hidden;
             background: #000;
             aspect-ratio: 3 / 4;
-            border: 1px solid rgba(201,168,76,0.2);
-            box-shadow: 0 0 60px rgba(201,168,76,0.08);
+            border: 1px solid rgba(201, 168, 76, 0.2);
+            box-shadow: 0 0 60px rgba(201, 168, 76, 0.08);
         }
 
         #video {
@@ -70,7 +79,8 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
-            transform: scaleX(-1); /* miroir natif */
+            transform: scaleX(-1);
+            /* miroir natif */
         }
 
         #overlay-canvas {
@@ -99,7 +109,7 @@
             right: 0;
             z-index: 10;
             padding: 14px 20px;
-            background: linear-gradient(0deg, rgba(0,0,0,0.85) 0%, transparent 100%);
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
             display: flex;
             align-items: center;
             gap: 10px;
@@ -113,11 +123,15 @@
             flex-shrink: 0;
             transition: background 0.3s;
         }
-        #status-dot.detected { background: #4ade80; box-shadow: 0 0 8px #4ade80; }
+
+        #status-dot.detected {
+            background: #4ade80;
+            box-shadow: 0 0 8px #4ade80;
+        }
 
         #status-text {
             font-size: 0.8rem;
-            color: rgba(255,255,255,0.85);
+            color: rgba(255, 255, 255, 0.85);
             letter-spacing: 0.04em;
         }
 
@@ -126,7 +140,7 @@
             position: absolute;
             inset: 0;
             z-index: 20;
-            background: rgba(10,10,15,0.9);
+            background: rgba(10, 10, 15, 0.9);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -134,17 +148,26 @@
             gap: 16px;
             transition: opacity 0.5s;
         }
-        #loading-overlay.hidden { opacity: 0; pointer-events: none; }
+
+        #loading-overlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
 
         .spinner {
             width: 40px;
             height: 40px;
-            border: 2px solid rgba(201,168,76,0.2);
+            border: 2px solid rgba(201, 168, 76, 0.2);
             border-top-color: var(--gold);
             border-radius: 50%;
             animation: spin 0.9s linear infinite;
         }
-        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
 
         #loading-text {
             font-size: 0.8rem;
@@ -162,8 +185,8 @@
             width: 42px;
             height: 42px;
             border-radius: 50%;
-            background: rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.15);
             color: white;
             font-size: 18px;
             cursor: pointer;
@@ -172,7 +195,10 @@
             justify-content: center;
             transition: background 0.2s;
         }
-        #switchBtn:hover { background: rgba(201,168,76,0.3); }
+
+        #switchBtn:hover {
+            background: rgba(201, 168, 76, 0.3);
+        }
 
         /* ── WATCH SELECTOR ── */
         .selector-section {
@@ -198,7 +224,7 @@
 
         .watch-card {
             background: var(--surface);
-            border: 1px solid rgba(255,255,255,0.07);
+            border: 1px solid rgba(255, 255, 255, 0.07);
             border-radius: 14px;
             padding: 16px 10px 12px;
             cursor: pointer;
@@ -207,24 +233,40 @@
             position: relative;
             overflow: hidden;
         }
+
         .watch-card::before {
             content: '';
             position: absolute;
             inset: 0;
-            background: linear-gradient(135deg, rgba(201,168,76,0.08), transparent);
+            background: linear-gradient(135deg, rgba(201, 168, 76, 0.08), transparent);
             opacity: 0;
             transition: opacity 0.25s;
         }
-        .watch-card.active, .watch-card:hover { border-color: rgba(201,168,76,0.4); }
-        .watch-card.active::before, .watch-card:hover::before { opacity: 1; }
-        .watch-card.active { box-shadow: 0 0 20px rgba(201,168,76,0.12); }
+
+        .watch-card.active,
+        .watch-card:hover {
+            border-color: rgba(201, 168, 76, 0.4);
+        }
+
+        .watch-card.active::before,
+        .watch-card:hover::before {
+            opacity: 1;
+        }
+
+        .watch-card.active {
+            box-shadow: 0 0 20px rgba(201, 168, 76, 0.12);
+        }
 
         .watch-preview {
             width: 56px;
             height: 56px;
             margin: 0 auto 10px;
         }
-        .watch-preview svg { width: 100%; height: 100%; }
+
+        .watch-preview svg {
+            width: 100%;
+            height: 100%;
+        }
 
         .watch-name {
             font-family: 'Playfair Display', serif;
@@ -232,6 +274,7 @@
             color: var(--text);
             margin-bottom: 2px;
         }
+
         .watch-sub {
             font-size: 0.65rem;
             color: var(--muted);
@@ -246,7 +289,10 @@
             margin: 6px auto 0;
             opacity: 0;
         }
-        .watch-card.active .active-dot { opacity: 1; }
+
+        .watch-card.active .active-dot {
+            opacity: 1;
+        }
 
         /* ── HINT ── */
         .hint {
@@ -255,7 +301,7 @@
             padding: 16px 20px;
             background: var(--surface);
             border-radius: 14px;
-            border: 1px solid rgba(255,255,255,0.06);
+            border: 1px solid rgba(255, 255, 255, 0.06);
             font-size: 0.8rem;
             color: var(--muted);
             line-height: 1.6;
@@ -264,14 +310,18 @@
             flex-direction: column;
             gap: 6px;
         }
-        .hint strong { color: var(--text); font-weight: 500; }
+
+        .hint strong {
+            color: var(--text);
+            font-weight: 500;
+        }
 
         /* ── START SCREEN ── */
         #start-screen {
             position: absolute;
             inset: 0;
             z-index: 30;
-            background: rgba(10,10,15,0.95);
+            background: rgba(10, 10, 15, 0.95);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -281,10 +331,29 @@
             text-align: center;
             transition: opacity 0.4s;
         }
-        #start-screen.hidden { opacity: 0; pointer-events: none; }
-        #start-icon { font-size: 2.4rem; }
-        #start-title { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); }
-        #start-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.5; max-width: 200px; }
+
+        #start-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        #start-icon {
+            font-size: 2.4rem;
+        }
+
+        #start-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            color: var(--gold);
+        }
+
+        #start-sub {
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.5;
+            max-width: 200px;
+        }
+
         #start-btn {
             margin-top: 8px;
             padding: 12px 28px;
@@ -298,7 +367,11 @@
             cursor: pointer;
             letter-spacing: 0.03em;
         }
-        #start-btn:active { opacity: 0.8; }
+
+        #start-btn:active {
+            opacity: 0.8;
+        }
+
         #start-error {
             font-size: 0.75rem;
             color: #e63946;
@@ -308,91 +381,92 @@
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <h1>✦ Essai Virtuel</h1>
-    <p>Essayez nos montres sur votre poignet en temps réel</p>
-</header>
+    <header>
+        <h1>✦ Essai Virtuel</h1>
+        <p>Essayez nos montres sur votre poignet en temps réel</p>
+    </header>
 
-<div class="ar-wrapper" id="arWrapper">
-    <video id="video" autoplay playsinline muted></video>
-    <canvas id="overlay-canvas"></canvas>
-    <canvas id="three-canvas"></canvas>
+    <div class="ar-wrapper" id="arWrapper">
+        <video id="video" autoplay playsinline muted></video>
+        <canvas id="overlay-canvas"></canvas>
+        <canvas id="three-canvas"></canvas>
 
-    <div id="loading-overlay" style="display:none">
-        <div class="spinner"></div>
-        <div id="loading-text">Démarrage…</div>
+        <div id="loading-overlay" style="display:none">
+            <div class="spinner"></div>
+            <div id="loading-text">Démarrage…</div>
+        </div>
+
+        <div id="start-screen">
+            <div id="start-icon">📷</div>
+            <div id="start-title">Autoriser la caméra</div>
+            <div id="start-sub">Appuyez pour démarrer l'essayage virtuel</div>
+            <button id="start-btn">Activer la caméra</button>
+            <div id="start-error"></div>
+        </div>
+
+        <div class="status-bar">
+            <div id="status-dot"></div>
+            <span id="status-text">Montrez votre poignet à la caméra</span>
+        </div>
+
+        <button id="switchBtn" title="Changer de caméra">🔄</button>
     </div>
 
-    <div id="start-screen">
-        <div id="start-icon">📷</div>
-        <div id="start-title">Autoriser la caméra</div>
-        <div id="start-sub">Appuyez pour démarrer l'essayage virtuel</div>
-        <button id="start-btn">Activer la caméra</button>
-        <div id="start-error"></div>
+    <div class="selector-section">
+        <div class="selector-label">Choisissez votre modèle</div>
+        <div class="watch-grid" id="watchGrid"></div>
     </div>
 
-    <div class="status-bar">
-        <div id="status-dot"></div>
-        <span id="status-text">Montrez votre poignet à la caméra</span>
+    <div class="hint">
+        <strong>Comment utiliser</strong>
+        Pointez la caméra vers votre poignet, main ouverte, paume vers le bas.<br>
+        La montre s'affiche automatiquement sur votre poignet.
     </div>
 
-    <button id="switchBtn" title="Changer de caméra">🔄</button>
-</div>
+    <!-- MEDIAPIPE -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
 
-<div class="selector-section">
-    <div class="selector-label">Choisissez votre modèle</div>
-    <div class="watch-grid" id="watchGrid"></div>
-</div>
+    <!-- THREE.JS (UMD) -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 
-<div class="hint">
-    <strong>Comment utiliser</strong>
-    Pointez la caméra vers votre poignet, main ouverte, paume vers le bas.<br>
-    La montre s'affiche automatiquement sur votre poignet.
-</div>
+    <script>
+        // ══════════════════════════════════════
+        //  CONFIGURATION DES MONTRES
+        // ══════════════════════════════════════
+        const WATCHES = [
+            {
+                name: 'Classique Or',
+                sub: 'Round · Gold',
+                colors: { body: '#c9a84c', face: '#f5f0e8', bezel: '#a8892f', strap: '#3d2b1f' },
+                style: 'round'
+            },
+            {
+                name: 'Sport Noir',
+                sub: 'Square · Black',
+                colors: { body: '#1a1a1a', face: '#0d0d0d', bezel: '#333', strap: '#111' },
+                style: 'square'
+            },
+            {
+                name: 'Élégance Rose',
+                sub: 'Round · Rosé',
+                colors: { body: '#b76e79', face: '#fff5f5', bezel: '#9d5560', strap: '#6b2d35' },
+                style: 'round'
+            }
+        ];
 
-<!-- MEDIAPIPE -->
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+        let currentWatchIndex = 0;
 
-<!-- THREE.JS (UMD) -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
-
-<script>
-// ══════════════════════════════════════
-//  CONFIGURATION DES MONTRES
-// ══════════════════════════════════════
-const WATCHES = [
-    {
-        name: 'Classique Or',
-        sub: 'Round · Gold',
-        colors: { body: '#c9a84c', face: '#f5f0e8', bezel: '#a8892f', strap: '#3d2b1f' },
-        style: 'round'
-    },
-    {
-        name: 'Sport Noir',
-        sub: 'Square · Black',
-        colors: { body: '#1a1a1a', face: '#0d0d0d', bezel: '#333', strap: '#111' },
-        style: 'square'
-    },
-    {
-        name: 'Élégance Rose',
-        sub: 'Round · Rosé',
-        colors: { body: '#b76e79', face: '#fff5f5', bezel: '#9d5560', strap: '#6b2d35' },
-        style: 'round'
-    }
-];
-
-let currentWatchIndex = 0;
-
-// ══════════════════════════════════════
-//  GÉNÉRATION DES ICÔNES SVG
-// ══════════════════════════════════════
-function makeWatchSVG(w) {
-    const c = w.colors;
-    if (w.style === 'square') {
-        return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
+        // ══════════════════════════════════════
+        //  GÉNÉRATION DES ICÔNES SVG
+        // ══════════════════════════════════════
+        function makeWatchSVG(w) {
+            const c = w.colors;
+            if (w.style === 'square') {
+                return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
             <rect x="22" y="0" width="12" height="14" rx="3" fill="${c.strap}"/>
             <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
             <rect x="8" y="12" width="40" height="44" rx="5" fill="${c.bezel}"/>
@@ -401,8 +475,8 @@ function makeWatchSVG(w) {
             <line x1="28" y1="34" x2="28" y2="24" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
             <line x1="28" y1="34" x2="34" y2="30" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
         </svg>`;
-    }
-    return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
+            }
+            return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
         <rect x="22" y="0" width="12" height="14" rx="3" fill="${c.strap}"/>
         <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
         <circle cx="28" cy="34" r="20" fill="${c.bezel}"/>
@@ -411,335 +485,335 @@ function makeWatchSVG(w) {
         <line x1="28" y1="34" x2="28" y2="20" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
         <line x1="28" y1="34" x2="37" y2="30" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
     </svg>`;
-}
+        }
 
-// ══════════════════════════════════════
-//  RENDU DE LA LISTE DE MONTRES
-// ══════════════════════════════════════
-const grid = document.getElementById('watchGrid');
-WATCHES.forEach((w, i) => {
-    const card = document.createElement('div');
-    card.className = 'watch-card' + (i === 0 ? ' active' : '');
-    card.innerHTML = `
+        // ══════════════════════════════════════
+        //  RENDU DE LA LISTE DE MONTRES
+        // ══════════════════════════════════════
+        const grid = document.getElementById('watchGrid');
+        WATCHES.forEach((w, i) => {
+            const card = document.createElement('div');
+            card.className = 'watch-card' + (i === 0 ? ' active' : '');
+            card.innerHTML = `
         <div class="watch-preview">${makeWatchSVG(w)}</div>
         <div class="watch-name">${w.name}</div>
         <div class="watch-sub">${w.sub}</div>
         <div class="active-dot"></div>`;
-    card.addEventListener('click', () => {
-        document.querySelectorAll('.watch-card').forEach(c => c.classList.remove('active'));
-        card.classList.add('active');
-        currentWatchIndex = i;
-    });
-    grid.appendChild(card);
-});
-
-// ══════════════════════════════════════
-//  THREE.JS — MONTRE 3D PROCÉDURALE
-// ══════════════════════════════════════
-const threeCanvas = document.getElementById('three-canvas');
-const renderer3D = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
-renderer3D.setPixelRatio(window.devicePixelRatio);
-renderer3D.setClearColor(0x000000, 0);
-
-const scene3D = new THREE.Scene();
-const camera3D = new THREE.PerspectiveCamera(60, 1, 0.01, 100);
-camera3D.position.set(0, 0, 5);
-
-const ambient = new THREE.AmbientLight(0xffffff, 0.6);
-scene3D.add(ambient);
-const dirLight = new THREE.DirectionalLight(0xfff5cc, 1.2);
-dirLight.position.set(2, 4, 3);
-scene3D.add(dirLight);
-const fillLight = new THREE.PointLight(0xffffff, 0.4);
-fillLight.position.set(-2, 0, 2);
-scene3D.add(fillLight);
-
-// Groupe principal montre — reconstruit à chaque changement
-let watchObj = null;
-
-function buildWatch3D(watch) {
-    if (watchObj) { scene3D.remove(watchObj); watchObj = null; }
-    const c = watch.colors;
-    const g = new THREE.Group();
-
-    const bodyMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.8, roughness: 0.2 });
-    const faceMat = new THREE.MeshStandardMaterial({ color: c.face, metalness: 0, roughness: 0.6 });
-    const bezelMat = new THREE.MeshStandardMaterial({ color: c.bezel, metalness: 0.9, roughness: 0.15 });
-    const strapMat = new THREE.MeshStandardMaterial({ color: c.strap, metalness: 0, roughness: 0.8 });
-
-    if (watch.style === 'square') {
-        // Boîtier carré
-        const box = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 0.22), bezelMat);
-        g.add(box);
-        const face = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.92, 0.01), faceMat);
-        face.position.z = 0.115;
-        g.add(face);
-    } else {
-        // Boîtier rond
-        const bezel = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.22, 48), bezelMat);
-        bezel.rotation.x = Math.PI / 2;
-        g.add(bezel);
-        const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceMat);
-        face.position.z = 0.115;
-        g.add(face);
-        // Couronne
-        const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.22, 12), bodyMat);
-        crown.rotation.z = Math.PI / 2;
-        crown.position.x = 0.64;
-        g.add(crown);
-    }
-
-    // Bracelet haut
-    const strapTop = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
-    strapTop.position.y = 0.95;
-    g.add(strapTop);
-    // Bracelet bas
-    const strapBot = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
-    strapBot.position.y = -0.95;
-    g.add(strapBot);
-
-    // Aiguilles
-    const handMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.6, roughness: 0.3 });
-    const hHand = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.3, 0.04), handMat);
-    hHand.position.set(-0.04, 0.12, 0.13);
-    g.add(hHand);
-    const mHand = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.42, 0.04), handMat);
-    mHand.position.set(0.06, 0.18, 0.13);
-    g.add(mHand);
-    const secMat = new THREE.MeshStandardMaterial({ color: '#e63946', metalness: 0.3, roughness: 0.5 });
-    const sHand = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.46, 0.04), secMat);
-    sHand.position.z = 0.135;
-    g.add(sHand);
-    // Centre
-    const center = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 12), bodyMat);
-    center.rotation.x = Math.PI / 2;
-    center.position.z = 0.13;
-    g.add(center);
-
-    watchObj = g;
-    scene3D.add(g);
-}
-
-buildWatch3D(WATCHES[0]);
-
-// ══════════════════════════════════════
-//  MEDIAPIPE — HANDS
-// ══════════════════════════════════════
-const video = document.getElementById('video');
-const statusDot = document.getElementById('status-dot');
-const statusText = document.getElementById('status-text');
-const loadingOverlay = document.getElementById('loading-overlay');
-const loadingText = document.getElementById('loading-text');
-
-const WRIST = 0, INDEX_MCP = 5, PINKY_MCP = 17, MIDDLE_MCP = 9, MIDDLE_TIP = 12;
-
-let arWidth = 540, arHeight = 720;
-
-function resizeRenderer() {
-    const wrap = document.getElementById('arWrapper');
-    arWidth = wrap.clientWidth;
-    arHeight = wrap.clientHeight;
-    renderer3D.setSize(arWidth, arHeight);
-    camera3D.aspect = arWidth / arHeight;
-    camera3D.updateProjectionMatrix();
-    threeCanvas.style.width = arWidth + 'px';
-    threeCanvas.style.height = arHeight + 'px';
-}
-window.addEventListener('resize', resizeRenderer);
-setTimeout(resizeRenderer, 100);
-
-// Convertit coordonnée MediaPipe (normalisée, NON miroir) → scène 3D
-function mpToScene(lm, w, h) {
-    // MediaPipe retourne x non-miroir ; la vidéo est miroir côté CSS
-    // donc on doit inverser x pour coller visuellement
-    const x = (0.5 - lm.x) * (w / h) * 3.5;
-    const y = (0.5 - lm.y) * 3.5;
-    return { x, y, z: -lm.z * 4 };
-}
-
-const hands = new Hands({
-    locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-});
-hands.setOptions({
-    maxNumHands: 1,
-    modelComplexity: 1,
-    minDetectionConfidence: 0.65,
-    minTrackingConfidence: 0.5
-});
-
-let lastLandmarks = null;
-
-hands.onResults(results => {
-    if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-        lastLandmarks = results.multiHandLandmarks[0];
-        statusDot.classList.add('detected');
-        statusText.textContent = '⌚ Montre placée sur votre poignet';
-    } else {
-        lastLandmarks = null;
-        statusDot.classList.remove('detected');
-        statusText.textContent = 'Montrez votre poignet à la caméra';
-    }
-});
-
-// ══════════════════════════════════════
-//  BOUCLE DE RENDU
-// ══════════════════════════════════════
-const clock3D = new THREE.Clock();
-
-function animate() {
-    requestAnimationFrame(animate);
-
-    // Rebuild watch if changed
-    if (watchObj && currentWatchIndex !== lastBuiltIndex) {
-        lastBuiltIndex = currentWatchIndex;
-        buildWatch3D(WATCHES[currentWatchIndex]);
-    }
-
-    if (lastLandmarks && watchObj) {
-        const lms = lastLandmarks;
-        const w = arWidth, h = arHeight;
-
-        const wrist = mpToScene(lms[WRIST], w, h);
-        const index = mpToScene(lms[INDEX_MCP], w, h);
-        const pinky = mpToScene(lms[PINKY_MCP], w, h);
-        const mid = mpToScene(lms[MIDDLE_MCP], w, h);
-
-        // Position = entre poignet et milieu MCP
-        const px = wrist.x * 0.6 + mid.x * 0.4;
-        const py = wrist.y * 0.6 + mid.y * 0.4;
-        const pz = wrist.z * 0.6 + mid.z * 0.4;
-
-        watchObj.position.set(px, py, pz);
-
-        // Taille basée sur largeur du poignet
-        const bw = Math.hypot(index.x - pinky.x, index.y - pinky.y);
-        const scale = Math.max(0.3, Math.min(1.5, bw * 1.1));
-        watchObj.scale.set(scale, scale, scale);
-
-        // Rotation — alignée sur l'axe poignet→doigt
-        const dx = mid.x - wrist.x;
-        const dy = mid.y - wrist.y;
-        const angleZ = Math.atan2(dy, dx) - Math.PI / 2;
-        watchObj.rotation.set(Math.PI / 2, 0, angleZ);
-
-        // Tilt latéral selon inclinaison main
-        const tilt = (index.y - pinky.y) * 0.8;
-        watchObj.rotation.y = tilt;
-
-        watchObj.visible = true;
-    } else if (watchObj) {
-        watchObj.visible = false;
-    }
-
-    // Tick aiguille des secondes
-    if (watchObj) {
-        const sec = watchObj.children.find((_, i) => i === 4); // sHand
-        if (sec) sec.rotation.z = -(Date.now() / 1000 % 60) * (Math.PI * 2 / 60);
-    }
-
-    renderer3D.render(scene3D, camera3D);
-}
-
-let lastBuiltIndex = 0;
-animate();
-
-// ══════════════════════════════════════
-//  CAMÉRA
-// ══════════════════════════════════════
-let currentStream = null;
-let mpCamera = null;
-let currentFacing = 'environment';
-
-const startScreen = document.getElementById('start-screen');
-const startBtn = document.getElementById('start-btn');
-const startError = document.getElementById('start-error');
-const loadingOverlay = document.getElementById('loading-overlay');
-
-async function startCamera(facingMode) {
-    if (mpCamera) { try { mpCamera.stop(); } catch(e){} mpCamera = null; }
-    if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
-
-    loadingOverlay.style.display = 'flex';
-    loadingText.textContent = 'Connexion caméra…';
-
-    try {
-        // Essai avec facingMode exact, sinon sans contrainte
-        let stream;
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
-                audio: false
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.watch-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                currentWatchIndex = i;
             });
-        } catch(e) {
-            // facingMode exact échoue souvent sur desktop → on essaie sans
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-                audio: false
-            });
+            grid.appendChild(card);
+        });
+
+        // ══════════════════════════════════════
+        //  THREE.JS — MONTRE 3D PROCÉDURALE
+        // ══════════════════════════════════════
+        const threeCanvas = document.getElementById('three-canvas');
+        const renderer3D = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
+        renderer3D.setPixelRatio(window.devicePixelRatio);
+        renderer3D.setClearColor(0x000000, 0);
+
+        const scene3D = new THREE.Scene();
+        const camera3D = new THREE.PerspectiveCamera(60, 1, 0.01, 100);
+        camera3D.position.set(0, 0, 5);
+
+        const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+        scene3D.add(ambient);
+        const dirLight = new THREE.DirectionalLight(0xfff5cc, 1.2);
+        dirLight.position.set(2, 4, 3);
+        scene3D.add(dirLight);
+        const fillLight = new THREE.PointLight(0xffffff, 0.4);
+        fillLight.position.set(-2, 0, 2);
+        scene3D.add(fillLight);
+
+        // Groupe principal montre — reconstruit à chaque changement
+        let watchObj = null;
+
+        function buildWatch3D(watch) {
+            if (watchObj) { scene3D.remove(watchObj); watchObj = null; }
+            const c = watch.colors;
+            const g = new THREE.Group();
+
+            const bodyMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.8, roughness: 0.2 });
+            const faceMat = new THREE.MeshStandardMaterial({ color: c.face, metalness: 0, roughness: 0.6 });
+            const bezelMat = new THREE.MeshStandardMaterial({ color: c.bezel, metalness: 0.9, roughness: 0.15 });
+            const strapMat = new THREE.MeshStandardMaterial({ color: c.strap, metalness: 0, roughness: 0.8 });
+
+            if (watch.style === 'square') {
+                // Boîtier carré
+                const box = new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 0.22), bezelMat);
+                g.add(box);
+                const face = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.92, 0.01), faceMat);
+                face.position.z = 0.115;
+                g.add(face);
+            } else {
+                // Boîtier rond
+                const bezel = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.22, 48), bezelMat);
+                bezel.rotation.x = Math.PI / 2;
+                g.add(bezel);
+                const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceMat);
+                face.position.z = 0.115;
+                g.add(face);
+                // Couronne
+                const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.22, 12), bodyMat);
+                crown.rotation.z = Math.PI / 2;
+                crown.position.x = 0.64;
+                g.add(crown);
+            }
+
+            // Bracelet haut
+            const strapTop = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
+            strapTop.position.y = 0.95;
+            g.add(strapTop);
+            // Bracelet bas
+            const strapBot = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
+            strapBot.position.y = -0.95;
+            g.add(strapBot);
+
+            // Aiguilles
+            const handMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.6, roughness: 0.3 });
+            const hHand = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.3, 0.04), handMat);
+            hHand.position.set(-0.04, 0.12, 0.13);
+            g.add(hHand);
+            const mHand = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.42, 0.04), handMat);
+            mHand.position.set(0.06, 0.18, 0.13);
+            g.add(mHand);
+            const secMat = new THREE.MeshStandardMaterial({ color: '#e63946', metalness: 0.3, roughness: 0.5 });
+            const sHand = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.46, 0.04), secMat);
+            sHand.position.z = 0.135;
+            g.add(sHand);
+            // Centre
+            const center = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 12), bodyMat);
+            center.rotation.x = Math.PI / 2;
+            center.position.z = 0.13;
+            g.add(center);
+
+            watchObj = g;
+            scene3D.add(g);
         }
 
-        video.srcObject = stream;
-        currentStream = stream;
-        video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+        buildWatch3D(WATCHES[0]);
 
-        await new Promise((res, rej) => {
-            video.onloadedmetadata = res;
-            video.onerror = rej;
-            setTimeout(res, 3000); // timeout sécurité
+        // ══════════════════════════════════════
+        //  MEDIAPIPE — HANDS
+        // ══════════════════════════════════════
+        const video = document.getElementById('video');
+        const statusDot = document.getElementById('status-dot');
+        const statusText = document.getElementById('status-text');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const loadingText = document.getElementById('loading-text');
+
+        const WRIST = 0, INDEX_MCP = 5, PINKY_MCP = 17, MIDDLE_MCP = 9, MIDDLE_TIP = 12;
+
+        let arWidth = 540, arHeight = 720;
+
+        function resizeRenderer() {
+            const wrap = document.getElementById('arWrapper');
+            arWidth = wrap.clientWidth;
+            arHeight = wrap.clientHeight;
+            renderer3D.setSize(arWidth, arHeight);
+            camera3D.aspect = arWidth / arHeight;
+            camera3D.updateProjectionMatrix();
+            threeCanvas.style.width = arWidth + 'px';
+            threeCanvas.style.height = arHeight + 'px';
+        }
+        window.addEventListener('resize', resizeRenderer);
+        setTimeout(resizeRenderer, 100);
+
+        // Convertit coordonnée MediaPipe (normalisée, NON miroir) → scène 3D
+        function mpToScene(lm, w, h) {
+            // MediaPipe retourne x non-miroir ; la vidéo est miroir côté CSS
+            // donc on doit inverser x pour coller visuellement
+            const x = (0.5 - lm.x) * (w / h) * 3.5;
+            const y = (0.5 - lm.y) * 3.5;
+            return { x, y, z: -lm.z * 4 };
+        }
+
+        const hands = new Hands({
+            locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
         });
-        await video.play();
-        resizeRenderer();
-
-        mpCamera = new Camera(video, {
-            onFrame: async () => { await hands.send({ image: video }); },
-            width: 1280, height: 720
+        hands.setOptions({
+            maxNumHands: 1,
+            modelComplexity: 1,
+            minDetectionConfidence: 0.65,
+            minTrackingConfidence: 0.5
         });
-        await mpCamera.start();
 
-        loadingOverlay.style.display = 'none';
-        currentFacing = facingMode;
-        return true;
-    } catch (err) {
-        console.error('Erreur caméra', facingMode, err);
-        loadingOverlay.style.display = 'none';
-        return false;
-    }
-}
+        let lastLandmarks = null;
 
-// Switch caméra
-document.getElementById('switchBtn').addEventListener('click', async () => {
-    const next = currentFacing === 'environment' ? 'user' : 'environment';
-    const ok = await startCamera(next);
-    if (!ok) await startCamera(currentFacing);
-});
+        hands.onResults(results => {
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                lastLandmarks = results.multiHandLandmarks[0];
+                statusDot.classList.add('detected');
+                statusText.textContent = '⌚ Montre placée sur votre poignet';
+            } else {
+                lastLandmarks = null;
+                statusDot.classList.remove('detected');
+                statusText.textContent = 'Montrez votre poignet à la caméra';
+            }
+        });
 
-// ── BOUTON DE DÉMARRAGE (geste utilisateur requis) ──
-startBtn.addEventListener('click', async () => {
-    startError.textContent = '';
-    startBtn.textContent = 'Connexion…';
-    startBtn.disabled = true;
+        // ══════════════════════════════════════
+        //  BOUCLE DE RENDU
+        // ══════════════════════════════════════
+        const clock3D = new THREE.Clock();
 
-    // Vérifier si getUserMedia est supporté
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        startError.textContent = '⚠️ Votre navigateur ne supporte pas la caméra. Utilisez Chrome ou Safari récent.';
-        startBtn.textContent = 'Activer la caméra';
-        startBtn.disabled = false;
-        return;
-    }
+        function animate() {
+            requestAnimationFrame(animate);
 
-    // Tenter caméra arrière, puis avant
-    let ok = await startCamera('environment');
-    if (!ok) ok = await startCamera('user');
+            // Rebuild watch if changed
+            if (watchObj && currentWatchIndex !== lastBuiltIndex) {
+                lastBuiltIndex = currentWatchIndex;
+                buildWatch3D(WATCHES[currentWatchIndex]);
+            }
 
-    if (ok) {
-        startScreen.classList.add('hidden');
-    } else {
-        startError.textContent = '❌ Permission refusée. Allez dans les paramètres de votre navigateur → Autorisations → Caméra → Autoriser ce site.';
-        startBtn.textContent = 'Réessayer';
-        startBtn.disabled = false;
-    }
-});
+            if (lastLandmarks && watchObj) {
+                const lms = lastLandmarks;
+                const w = arWidth, h = arHeight;
 
-</script>
+                const wrist = mpToScene(lms[WRIST], w, h);
+                const index = mpToScene(lms[INDEX_MCP], w, h);
+                const pinky = mpToScene(lms[PINKY_MCP], w, h);
+                const mid = mpToScene(lms[MIDDLE_MCP], w, h);
+
+                // Position = entre poignet et milieu MCP
+                const px = wrist.x * 0.6 + mid.x * 0.4;
+                const py = wrist.y * 0.6 + mid.y * 0.4;
+                const pz = wrist.z * 0.6 + mid.z * 0.4;
+
+                watchObj.position.set(px, py, pz);
+
+                // Taille basée sur largeur du poignet
+                const bw = Math.hypot(index.x - pinky.x, index.y - pinky.y);
+                const scale = Math.max(0.3, Math.min(1.5, bw * 1.1));
+                watchObj.scale.set(scale, scale, scale);
+
+                // Rotation — alignée sur l'axe poignet→doigt
+                const dx = mid.x - wrist.x;
+                const dy = mid.y - wrist.y;
+                const angleZ = Math.atan2(dy, dx) - Math.PI / 2;
+                watchObj.rotation.set(Math.PI / 2, 0, angleZ);
+
+                // Tilt latéral selon inclinaison main
+                const tilt = (index.y - pinky.y) * 0.8;
+                watchObj.rotation.y = tilt;
+
+                watchObj.visible = true;
+            } else if (watchObj) {
+                watchObj.visible = false;
+            }
+
+            // Tick aiguille des secondes
+            if (watchObj) {
+                const sec = watchObj.children.find((_, i) => i === 4); // sHand
+                if (sec) sec.rotation.z = -(Date.now() / 1000 % 60) * (Math.PI * 2 / 60);
+            }
+
+            renderer3D.render(scene3D, camera3D);
+        }
+
+        let lastBuiltIndex = 0;
+        animate();
+
+        // ══════════════════════════════════════
+        //  CAMÉRA
+        // ══════════════════════════════════════
+        let currentStream = null;
+        let mpCamera = null;
+        let currentFacing = 'environment';
+
+        const startScreen = document.getElementById('start-screen');
+        const startBtn = document.getElementById('start-btn');
+        const startError = document.getElementById('start-error');
+
+        async function startCamera(facingMode) {
+            if (mpCamera) { try { mpCamera.stop(); } catch (e) { } mpCamera = null; }
+            if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
+
+            loadingOverlay.style.display = 'flex';
+            loadingText.textContent = 'Connexion caméra…';
+
+            try {
+                // Essai avec facingMode exact, sinon sans contrainte
+                let stream;
+                try {
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode: { exact: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
+                        audio: false
+                    });
+                } catch (e) {
+                    // facingMode exact échoue souvent sur desktop → on essaie sans
+                    stream = await navigator.mediaDevices.getUserMedia({
+                        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
+                        audio: false
+                    });
+                }
+
+                video.srcObject = stream;
+                currentStream = stream;
+                video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+
+                await new Promise((res, rej) => {
+                    video.onloadedmetadata = res;
+                    video.onerror = rej;
+                    setTimeout(res, 3000); // timeout sécurité
+                });
+                await video.play();
+                resizeRenderer();
+
+                mpCamera = new Camera(video, {
+                    onFrame: async () => { await hands.send({ image: video }); },
+                    width: 1280, height: 720
+                });
+                await mpCamera.start();
+
+                loadingOverlay.style.display = 'none';
+                currentFacing = facingMode;
+                return true;
+            } catch (err) {
+                console.error('Erreur caméra', facingMode, err);
+                loadingOverlay.style.display = 'none';
+                return false;
+            }
+        }
+
+        // Switch caméra
+        document.getElementById('switchBtn').addEventListener('click', async () => {
+            const next = currentFacing === 'environment' ? 'user' : 'environment';
+            const ok = await startCamera(next);
+            if (!ok) await startCamera(currentFacing);
+        });
+
+        // ── BOUTON DE DÉMARRAGE (geste utilisateur requis) ──
+        startBtn.addEventListener('click', async () => {
+            startError.textContent = '';
+            startBtn.textContent = 'Connexion…';
+            startBtn.disabled = true;
+
+            // Vérifier si getUserMedia est supporté
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                startError.textContent = '⚠️ Votre navigateur ne supporte pas la caméra. Utilisez Chrome ou Safari récent.';
+                startBtn.textContent = 'Activer la caméra';
+                startBtn.disabled = false;
+                return;
+            }
+
+            // Tenter caméra arrière, puis avant
+            let ok = await startCamera('environment');
+            if (!ok) ok = await startCamera('user');
+
+            if (ok) {
+                startScreen.classList.add('hidden');
+            } else {
+                startError.textContent = '❌ Permission refusée. Allez dans les paramètres de votre navigateur → Autorisations → Caméra → Autoriser ce site.';
+                startBtn.textContent = 'Réessayer';
+                startBtn.disabled = false;
+            }
+        });
+
+    </script>
 </body>
+
 </html>
