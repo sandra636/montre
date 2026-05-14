@@ -2,17 +2,17 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ======= CONFIGURATION =======
-// ⬇️ Chemin de VOTRE fichier .glb (dossier models/)
 const MODELS_3D = [
-    './models/montre1.glb',   // Bouton 1
-    './models/montre1.glb',   // Bouton 2
-    './models/montre1.glb'    // Bouton 3
+    './models/montre1.glb',
+    './models/montre1.glb',
+    './models/montre1.glb'
 ];
 // =============================
 
-let currentModel = null;
 let scene, camera, renderer, loader;
 let watchGroup = null;
+let currentStream = null;
+let currentCameraUtils = null;
 
 // Éléments DOM
 const video = document.getElementById('video');
@@ -43,7 +43,7 @@ function initThree() {
     loader = new GLTFLoader();
 }
 
-// Chargement d'un modèle 3D
+// Chargement du modèle 3D
 function loadWatch(modelPath) {
     if (watchGroup) {
         scene.remove(watchGroup);
@@ -69,7 +69,7 @@ function loadWatch(modelPath) {
     });
 }
 
-// Positionner la montre sur le poignet
+// Positionnement sur le poignet
 function updateWatchPosition(landmarks) {
     if (!watchGroup) return;
     
@@ -78,7 +78,6 @@ function updateWatchPosition(landmarks) {
     const pinkyMcp = landmarks[17];
     const middleMcp = landmarks[9];
     
-    // Calcul de la position et de l'échelle
     const wristX = (0.5 - wrist.x) * 8;
     const wristY = (0.5 - wrist.y) * 6;
     const wristZ = -wrist.z * 8;
@@ -98,7 +97,6 @@ function updateWatchPosition(landmarks) {
     watchGroup.position.set(wristX + (midX - wristX) * 0.1, wristY + (midY - wristY) * 0.1, wristZ + 0.1);
     watchGroup.scale.set(scale, scale, scale);
     
-    // Rotation
     const angleZ = Math.atan2(midY - wristY, midX - wristX);
     watchGroup.rotation.z = angleZ - Math.PI / 2;
     watchGroup.rotation.x = Math.PI / 2;
@@ -129,50 +127,68 @@ hands.onResults((results) => {
     renderer.render(scene, camera);
 });
 
-// Démarrer la caméra (version corrigée pour caméra arrière)
-async function initCamera() {
+// Gestion de la caméra
+async function startCamera(facingMode) {
+    if (currentStream) {
+        currentStream.getTracks().forEach(track => track.stop());
+    }
+    
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ 
-            video: { facingMode: { exact: "environment" } } 
-        });
+        const constraints = {
+            video: { facingMode: { exact: facingMode } }
+        };
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = stream;
+        currentStream = stream;
         await video.play();
         
-        const cameraUtils = new Camera(video, {
+        if (currentCameraUtils) {
+            // Nettoyer l'ancienne instance si elle existe
+        }
+        currentCameraUtils = new Camera(video, {
             onFrame: async () => {
                 await hands.send({ image: video });
             },
             width: 1280,
             height: 720
         });
-        await cameraUtils.start();
+        await currentCameraUtils.start();
         
+        statusDiv.textContent = facingMode === 'environment' ? '✅ Caméra arrière active' : '✅ Caméra avant active';
         loadingDiv.style.display = 'none';
-        statusDiv.textContent = '👋 Montrez votre poignet';
+        return true;
     } catch (err) {
-        console.error('Erreur caméra:', err);
-        // Fallback : si caméra arrière échoue, on prend la caméra par défaut
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-            video.srcObject = stream;
-            await video.play();
-            const cameraUtils = new Camera(video, {
-                onFrame: async () => {
-                    await hands.send({ image: video });
-                },
-                width: 1280,
-                height: 720
-            });
-            await cameraUtils.start();
-            loadingDiv.style.display = 'none';
-            statusDiv.textContent = '👋 Montrez votre poignet';
-        } catch (fallbackErr) {
-            loadingDiv.innerHTML = `❌ Erreur caméra : ${fallbackErr.message}`;
-        }
+        console.error('Erreur caméra ' + facingMode, err);
+        statusDiv.textContent = '⚠️ Impossible d\'utiliser la caméra sélectionnée';
+        return false;
     }
 }
 
-// Changement de montre via les boutons
+async function initCamera() {
+    loadingDiv.style.display = 'block';
+    statusDiv.textContent = '📷 Démarrage caméra...';
+    
+    // Tentative caméra arrière
+    const backSuccess = await startCamera('environment');
+    
+    if (!backSuccess) {
+        statusDiv.textContent = '📷 Caméra arrière indisponible, utilisation caméra avant...';
+        await startCamera('user');
+    }
+    
+    // Bouton de basculement
+    const switchBtn = document.getElementById('switchCameraBtn');
+    if (switchBtn) {
+        let currentCamera = 'environment';
+        switchBtn.addEventListener('click', async () => {
+            const newCamera = currentCamera === 'environment' ? 'user' : 'environment';
+            currentCamera = newCamera;
+            await startCamera(newCamera);
+        });
+    }
+}
+
+// Changement de montre
 window.selectWatch = function(index) {
     document.querySelectorAll('.watch-btn').forEach((btn, i) => {
         btn.classList.toggle('active', i === index);
@@ -193,7 +209,6 @@ function init() {
     initThree();
     animate();
     initCamera();
-    // Charger le premier modèle après un court délai
     setTimeout(() => {
         if (MODELS_3D[0]) loadWatch(MODELS_3D[0]);
     }, 1000);
