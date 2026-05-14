@@ -3,18 +3,16 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Essai de Montre Virtuelle en RA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Essayage Virtuel de Montre</title>
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@300;400;500&display=swap"
         rel="stylesheet">
     <style>
-        *,
-        *::before,
-        *::after {
+        * {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            box-sizing: border-box
         }
 
         :root {
@@ -22,47 +20,46 @@
             --dark: #0a0a0f;
             --surface: #12121a;
             --text: #f0ede6;
-            --muted: #888;
+            --muted: #888
         }
 
         body {
             font-family: 'DM Sans', sans-serif;
             background: var(--dark);
             color: var(--text);
-            min-height: 100vh;
-            overflow-x: hidden;
+            overflow-x: hidden
         }
 
         header {
-            padding: 28px 24px 20px;
+            padding: 24px;
             text-align: center;
-            border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+            border-bottom: 1px solid rgba(201, 168, 76, 0.15)
         }
 
         header h1 {
             font-family: 'Playfair Display', serif;
-            font-size: clamp(1.4rem, 5vw, 2rem);
+            font-size: 1.6rem;
             color: var(--gold);
-            margin-bottom: 6px;
+            margin-bottom: 4px
         }
 
         header p {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--muted);
             text-transform: uppercase;
-            letter-spacing: 0.06em;
+            letter-spacing: 0.08em
         }
 
         .ar-wrapper {
             position: relative;
             width: 100%;
-            max-width: 540px;
-            margin: 20px auto;
-            border-radius: 20px;
+            max-width: 480px;
+            margin: 16px auto;
+            border-radius: 18px;
             overflow: hidden;
             background: #000;
             aspect-ratio: 3/4;
-            border: 1px solid rgba(201, 168, 76, 0.2);
+            border: 1px solid rgba(201, 168, 76, 0.25)
         }
 
         #video {
@@ -70,7 +67,7 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: cover
         }
 
         #three-canvas {
@@ -78,8 +75,8 @@
             inset: 0;
             width: 100%;
             height: 100%;
-            z-index: 6;
-            pointer-events: none;
+            z-index: 5;
+            pointer-events: none
         }
 
         .status-bar {
@@ -88,213 +85,118 @@
             left: 0;
             right: 0;
             z-index: 10;
-            padding: 14px 20px;
-            background: linear-gradient(0deg, rgba(0, 0, 0, 0.85) 0%, transparent 100%);
+            padding: 12px 16px;
+            background: linear-gradient(0deg, rgba(0, 0, 0, 0.9), transparent);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px
         }
 
-        #status-dot {
+        #dot {
             width: 8px;
             height: 8px;
             border-radius: 50%;
             background: var(--muted);
-            transition: background 0.3s;
+            transition: all 0.3s;
+            flex-shrink: 0
         }
 
-        #status-dot.detected {
+        #dot.on {
             background: #4ade80;
-            box-shadow: 0 0 8px #4ade80;
+            box-shadow: 0 0 8px #4ade80
         }
 
-        #status-text {
-            font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        #loading-overlay {
-            position: absolute;
-            inset: 0;
-            z-index: 20;
-            background: rgba(10, 10, 15, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        #loading-overlay.hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 2px solid rgba(201, 168, 76, 0.2);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.9s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        #loading-text {
-            font-size: 0.8rem;
-            color: var(--muted);
-            text-transform: uppercase;
+        #msg {
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.9)
         }
 
         #switchBtn {
             position: absolute;
-            top: 14px;
-            right: 14px;
+            top: 12px;
+            right: 12px;
             z-index: 10;
-            width: 42px;
-            height: 42px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: white;
-            font-size: 18px;
+            background: rgba(0, 0, 0, 0.65);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            font-size: 17px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: center
         }
 
-        .selector-section {
-            max-width: 540px;
-            margin: 0 auto 30px;
-            padding: 0 16px;
-        }
-
-        .selector-label {
-            font-size: 0.7rem;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 14px;
-        }
-
-        .watch-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-        }
-
-        .watch-card {
-            background: var(--surface);
-            border: 1px solid rgba(255, 255, 255, 0.07);
-            border-radius: 14px;
-            padding: 16px 10px 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.25s;
-        }
-
-        .watch-card.active {
-            border-color: rgba(201, 168, 76, 0.4);
-            box-shadow: 0 0 20px rgba(201, 168, 76, 0.12);
-        }
-
-        .watch-preview {
-            width: 56px;
-            height: 56px;
-            margin: 0 auto 10px;
-        }
-
-        .watch-preview svg {
-            width: 100%;
-            height: 100%;
-        }
-
-        .watch-name {
-            font-family: 'Playfair Display', serif;
-            font-size: 0.8rem;
-            color: var(--text);
-            margin-bottom: 2px;
-        }
-
-        .watch-sub {
-            font-size: 0.65rem;
-            color: var(--muted);
-        }
-
-        .active-dot {
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            background: var(--gold);
-            margin: 6px auto 0;
-            opacity: 0;
-        }
-
-        .watch-card.active .active-dot {
-            opacity: 1;
-        }
-
-        .hint {
-            max-width: 540px;
-            margin: 0 auto 40px;
-            padding: 16px 20px;
-            background: var(--surface);
-            border-radius: 14px;
-            font-size: 0.8rem;
-            color: var(--muted);
-            line-height: 1.6;
-            text-align: center;
-        }
-
-        .hint strong {
-            color: var(--text);
-        }
-
-        #start-screen {
+        #loadBox {
             position: absolute;
             inset: 0;
-            z-index: 30;
-            background: rgba(10, 10, 15, 0.95);
+            z-index: 20;
+            background: rgba(10, 10, 15, 0.92);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 14px
+        }
+
+        .spin {
+            width: 38px;
+            height: 38px;
+            border: 2px solid rgba(201, 168, 76, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: sp 0.9s linear infinite
+        }
+
+        @keyframes sp {
+            to {
+                transform: rotate(360deg)
+            }
+        }
+
+        #loadTxt {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em
+        }
+
+        #startBox {
+            position: absolute;
+            inset: 0;
+            z-index: 30;
+            background: rgba(10, 10, 15, 0.96);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
             padding: 24px;
             text-align: center;
-            transition: opacity 0.4s;
+            transition: opacity 0.4s
         }
 
-        #start-screen.hidden {
+        #startBox.gone {
             opacity: 0;
-            pointer-events: none;
+            pointer-events: none
         }
 
-        #start-icon {
-            font-size: 2.4rem;
-        }
-
-        #start-title {
+        #startBox h2 {
             font-family: 'Playfair Display', serif;
             font-size: 1.1rem;
-            color: var(--gold);
+            color: var(--gold)
         }
 
-        #start-sub {
+        #startBox p {
             font-size: 0.78rem;
             color: var(--muted);
-            line-height: 1.5;
             max-width: 200px;
+            line-height: 1.5
         }
 
-        #start-btn {
-            margin-top: 8px;
+        #startBtn {
             padding: 12px 28px;
             background: var(--gold);
             color: #0a0a0f;
@@ -302,59 +204,142 @@
             border-radius: 30px;
             font-size: 0.9rem;
             font-weight: 500;
-            cursor: pointer;
+            cursor: pointer
         }
 
-        #start-error {
-            font-size: 0.75rem;
+        #startErr {
+            font-size: 0.73rem;
             color: #e63946;
+            min-height: 18px;
             max-width: 220px;
-            line-height: 1.5;
-            min-height: 20px;
+            line-height: 1.5
+        }
+
+        .sel {
+            max-width: 480px;
+            margin: 0 auto 24px;
+            padding: 0 14px
+        }
+
+        .sel-lbl {
+            font-size: 0.68rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 12px
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid rgba(255, 255, 255, 0.07);
+            border-radius: 13px;
+            padding: 14px 8px 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s
+        }
+
+        .card.active {
+            border-color: rgba(201, 168, 76, 0.5);
+            box-shadow: 0 0 18px rgba(201, 168, 76, 0.15)
+        }
+
+        .card svg {
+            width: 52px;
+            height: 62px
+        }
+
+        .cname {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            color: var(--text);
+            margin-top: 8px
+        }
+
+        .csub {
+            font-size: 0.62rem;
+            color: var(--muted);
+            margin-top: 2px
+        }
+
+        .adot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--gold);
+            margin: 5px auto 0;
+            opacity: 0
+        }
+
+        .card.active .adot {
+            opacity: 1
+        }
+
+        .hint {
+            max-width: 480px;
+            margin: 0 auto 36px;
+            padding: 14px 18px;
+            background: var(--surface);
+            border-radius: 12px;
+            font-size: 0.78rem;
+            color: var(--muted);
+            line-height: 1.6;
+            text-align: center
+        }
+
+        .hint strong {
+            color: var(--text)
         }
     </style>
 </head>
 
 <body>
+
     <header>
         <h1>✦ Essai Virtuel</h1>
-        <p>Essayez nos montres sur votre poignet en temps réel</p>
+        <p>Essayez nos montres en temps réel</p>
     </header>
 
-    <div class="ar-wrapper" id="arWrapper">
+    <div class="ar-wrapper" id="arWrap">
         <video id="video" autoplay playsinline muted></video>
         <canvas id="three-canvas"></canvas>
 
-        <div id="loading-overlay" style="display:none">
-            <div class="spinner"></div>
-            <div id="loading-text">Démarrage…</div>
+        <div id="loadBox" style="display:none">
+            <div class="spin"></div>
+            <div id="loadTxt">Chargement…</div>
         </div>
 
-        <div id="start-screen">
-            <div id="start-icon">📷</div>
-            <div id="start-title">Autoriser la caméra</div>
-            <div id="start-sub">Appuyez pour démarrer l'essayage virtuel</div>
-            <button id="start-btn">Activer la caméra</button>
-            <div id="start-error"></div>
+        <div id="startBox">
+            <div style="font-size:2.2rem">📷</div>
+            <h2>Activer la caméra</h2>
+            <p>Appuyez pour démarrer l'essayage virtuel</p>
+            <button id="startBtn">Démarrer</button>
+            <div id="startErr"></div>
         </div>
 
         <div class="status-bar">
-            <div id="status-dot"></div>
-            <span id="status-text">Montrez votre poignet à la caméra</span>
+            <div id="dot"></div>
+            <span id="msg">Montrez votre poignet à la caméra</span>
         </div>
 
         <button id="switchBtn">🔄</button>
     </div>
 
-    <div class="selector-section">
-        <div class="selector-label">Choisissez votre modèle</div>
-        <div class="watch-grid" id="watchGrid"></div>
+    <div class="sel">
+        <div class="sel-lbl">Choisissez votre modèle</div>
+        <div class="grid" id="grid"></div>
     </div>
 
     <div class="hint">
         <strong>Comment utiliser</strong><br>
-        Pointez la caméra arrière vers votre poignet, main ouverte, paume vers le bas.
-        La montre s'affiche automatiquement sur votre poignet.
+        Pointez la caméra vers votre poignet, paume vers le bas.<br>
+        La montre se place automatiquement.
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js" crossorigin="anonymous"></script>
@@ -362,305 +347,278 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 
     <script>
+        // ── MONTRES ──
         const WATCHES = [
-            { name: 'Classique Or', sub: 'Round · Gold', colors: { body: '#c9a84c', face: '#f5f0e8', bezel: '#a8892f', strap: '#3d2b1f' }, style: 'round' },
-            { name: 'Sport Noir', sub: 'Square · Black', colors: { body: '#1a1a1a', face: '#0d0d0d', bezel: '#333', strap: '#111' }, style: 'square' },
-            { name: 'Élégance Rose', sub: 'Round · Rosé', colors: { body: '#b76e79', face: '#fff5f5', bezel: '#9d5560', strap: '#6b2d35' }, style: 'round' }
+            {
+                name: 'Classique Or', sub: 'Gold · Round',
+                c: { body: '#c9a84c', face: '#f5f0e8', bezel: '#a8892f', strap: '#3d2b1f' }, shape: 'round'
+            },
+            {
+                name: 'Sport Noir', sub: 'Black · Square',
+                c: { body: '#2a2a2a', face: '#111', bezel: '#444', strap: '#111' }, shape: 'square'
+            },
+            {
+                name: 'Élégance Rose', sub: 'Rosé · Round',
+                c: { body: '#b76e79', face: '#fff5f5', bezel: '#9d5560', strap: '#6b2d35' }, shape: 'round'
+            }
         ];
 
-        let currentWatchIndex = 0;
-        let lastBuiltIndex = 0;
+        let curIdx = 0, lastIdx = 0;
 
-        function makeWatchSVG(w) {
-            const c = w.colors;
-            if (w.style === 'square') {
-                return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
-                    <rect x="22" y="0" width="12" height="14" rx="3" fill="${c.strap}"/>
-                    <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
-                    <rect x="8" y="12" width="40" height="44" rx="5" fill="${c.bezel}"/>
-                    <rect x="11" y="15" width="34" height="38" rx="3" fill="${c.face}"/>
-                    <circle cx="28" cy="34" r="2" fill="${c.body}"/>
-                    <line x1="28" y1="34" x2="28" y2="24" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
-                    <line x1="28" y1="34" x2="34" y2="30" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
-                </svg>`;
-            }
-            return `<svg viewBox="0 0 56 70" xmlns="http://www.w3.org/2000/svg">
-                <rect x="22" y="0" width="12" height="14" rx="3" fill="${c.strap}"/>
-                <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
-                <circle cx="28" cy="34" r="20" fill="${c.bezel}"/>
-                <circle cx="28" cy="34" r="17" fill="${c.face}"/>
-                <circle cx="28" cy="34" r="2" fill="${c.body}"/>
-                <line x1="28" y1="34" x2="28" y2="20" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
-                <line x1="28" y1="34" x2="37" y2="30" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
-            </svg>`;
+        function svg(w) {
+            const c = w.c;
+            if (w.shape === 'square') return `<svg viewBox="0 0 56 70">
+    <rect x="22" y="0"  width="12" height="14" rx="3" fill="${c.strap}"/>
+    <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
+    <rect x="7"  y="12" width="42" height="44" rx="5" fill="${c.bezel}"/>
+    <rect x="10" y="15" width="36" height="38" rx="3" fill="${c.face}"/>
+    <circle cx="28" cy="34" r="2" fill="${c.body}"/>
+    <line x1="28" y1="34" x2="28" y2="23" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="28" y1="34" x2="35" y2="29" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`;
+            return `<svg viewBox="0 0 56 70">
+    <rect x="22" y="0"  width="12" height="14" rx="3" fill="${c.strap}"/>
+    <rect x="22" y="56" width="12" height="14" rx="3" fill="${c.strap}"/>
+    <circle cx="28" cy="34" r="21" fill="${c.bezel}"/>
+    <circle cx="28" cy="34" r="17" fill="${c.face}"/>
+    <circle cx="28" cy="34" r="2"  fill="${c.body}"/>
+    <line x1="28" y1="34" x2="28" y2="19" stroke="${c.body}" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="28" y1="34" x2="37" y2="29" stroke="${c.body}" stroke-width="1.2" stroke-linecap="round"/>
+  </svg>`;
         }
 
-        const grid = document.getElementById('watchGrid');
+        const gridEl = document.getElementById('grid');
         WATCHES.forEach((w, i) => {
-            const card = document.createElement('div');
-            card.className = 'watch-card' + (i === 0 ? ' active' : '');
-            card.innerHTML = `
-                <div class="watch-preview">${makeWatchSVG(w)}</div>
-                <div class="watch-name">${w.name}</div>
-                <div class="watch-sub">${w.sub}</div>
-                <div class="active-dot"></div>`;
-            card.addEventListener('click', () => {
-                document.querySelectorAll('.watch-card').forEach(c => c.classList.remove('active'));
-                card.classList.add('active');
-                currentWatchIndex = i;
-            });
-            grid.appendChild(card);
+            const d = document.createElement('div');
+            d.className = 'card' + (i === 0 ? ' active' : '');
+            d.innerHTML = `${svg(w)}<div class="cname">${w.name}</div><div class="csub">${w.sub}</div><div class="adot"></div>`;
+            d.onclick = () => {
+                document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                d.classList.add('active'); curIdx = i;
+            };
+            gridEl.appendChild(d);
         });
 
-        // THREE.JS
-        const threeCanvas = document.getElementById('three-canvas');
-        const renderer3D = new THREE.WebGLRenderer({ canvas: threeCanvas, alpha: true, antialias: true });
-        renderer3D.setPixelRatio(window.devicePixelRatio);
-        renderer3D.setClearColor(0x000000, 0);
+        // ── THREE.JS ──
+        const canvas = document.getElementById('three-canvas');
+        const rdr = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+        rdr.setPixelRatio(devicePixelRatio);
+        rdr.setClearColor(0, 0);
 
-        const scene3D = new THREE.Scene();
-        const camera3D = new THREE.PerspectiveCamera(60, 1, 0.01, 100);
-        camera3D.position.set(0, 0, 5);
+        const scene = new THREE.Scene();
+        const cam3 = new THREE.PerspectiveCamera(55, 1, 0.01, 100);
+        cam3.position.z = 5;
 
-        scene3D.add(new THREE.AmbientLight(0xffffff, 0.8));
-        const dirLight = new THREE.DirectionalLight(0xfff5cc, 1.2);
-        dirLight.position.set(2, 4, 3);
-        scene3D.add(dirLight);
-        const fillLight = new THREE.PointLight(0xffffff, 0.4);
-        fillLight.position.set(-2, 0, 2);
-        scene3D.add(fillLight);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+        const dl = new THREE.DirectionalLight(0xfff8e0, 1.3); dl.position.set(3, 5, 4); scene.add(dl);
+        const pl = new THREE.PointLight(0xffffff, 0.5); pl.position.set(-3, 0, 3); scene.add(pl);
 
-        let watchObj = null;
+        let wObj = null;
 
-        function buildWatch3D(watch) {
-            if (watchObj) { scene3D.remove(watchObj); watchObj = null; }
-            const c = watch.colors;
-            const g = new THREE.Group();
-            const bodyMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.8, roughness: 0.2 });
-            const faceMat = new THREE.MeshStandardMaterial({ color: c.face, metalness: 0, roughness: 0.6 });
-            const bezelMat = new THREE.MeshStandardMaterial({ color: c.bezel, metalness: 0.9, roughness: 0.15 });
-            const strapMat = new THREE.MeshStandardMaterial({ color: c.strap, metalness: 0, roughness: 0.8 });
+        function buildWatch(w) {
+            if (wObj) { scene.remove(wObj); wObj = null; }
+            const c = w.c, g = new THREE.Group();
+            const M = (col, met, rou) => new THREE.MeshStandardMaterial({ color: col, metalness: met, roughness: rou });
 
-            if (watch.style === 'square') {
-                g.add(new THREE.Mesh(new THREE.BoxGeometry(1.1, 1.1, 0.22), bezelMat));
-                const face = new THREE.Mesh(new THREE.BoxGeometry(0.92, 0.92, 0.01), faceMat);
-                face.position.z = 0.115;
-                g.add(face);
+            if (w.shape === 'square') {
+                // Boitier carré
+                g.add(Object.assign(new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 0.28), M(c.bezel, 0.9, 0.15))));
+                const face = new THREE.Mesh(new THREE.BoxGeometry(1.0, 1.0, 0.02), M(c.face, 0, 0.5));
+                face.position.z = 0.14; g.add(face);
             } else {
-                const bezel = new THREE.Mesh(new THREE.CylinderGeometry(0.58, 0.58, 0.22, 48), bezelMat);
-                bezel.rotation.x = Math.PI / 2;
-                g.add(bezel);
-                const face = new THREE.Mesh(new THREE.CircleGeometry(0.5, 48), faceMat);
-                face.position.z = 0.115;
-                g.add(face);
-                const crown = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.22, 12), bodyMat);
-                crown.rotation.z = Math.PI / 2;
-                crown.position.x = 0.64;
-                g.add(crown);
+                // Boitier rond
+                const bz = new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.62, 0.26, 64), M(c.bezel, 0.9, 0.12));
+                bz.rotation.x = Math.PI / 2; g.add(bz);
+                const face = new THREE.Mesh(new THREE.CircleGeometry(0.54, 64), M(c.face, 0, 0.5));
+                face.position.z = 0.14; g.add(face);
+                // Couronne
+                const cr = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 0.2, 12), M(c.body, 0.8, 0.2));
+                cr.rotation.z = Math.PI / 2; cr.position.x = 0.7; g.add(cr);
             }
 
-            const strapTop = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
-            strapTop.position.y = 0.95;
-            g.add(strapTop);
-            const strapBot = new THREE.Mesh(new THREE.BoxGeometry(0.52, 0.9, 0.1), strapMat);
-            strapBot.position.y = -0.95;
-            g.add(strapBot);
+            // Bracelets
+            const sm = M(c.strap, 0.05, 0.85);
+            const st = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.1, 0.12), sm);
+            st.position.y = 1.05; g.add(st);
+            const sb = new THREE.Mesh(new THREE.BoxGeometry(0.55, 1.1, 0.12), sm);
+            sb.position.y = -1.05; g.add(sb);
 
-            const handMat = new THREE.MeshStandardMaterial({ color: c.body, metalness: 0.6, roughness: 0.3 });
-            const hHand = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.3, 0.04), handMat);
-            hHand.position.set(-0.04, 0.12, 0.13);
-            g.add(hHand);
-            const mHand = new THREE.Mesh(new THREE.BoxGeometry(0.03, 0.42, 0.04), handMat);
-            mHand.position.set(0.06, 0.18, 0.13);
-            g.add(mHand);
-            const secMat = new THREE.MeshStandardMaterial({ color: '#e63946' });
-            const sHand = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.46, 0.04), secMat);
-            sHand.position.z = 0.135;
-            g.add(sHand);
-            const center = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.04, 0.06, 12), bodyMat);
-            center.rotation.x = Math.PI / 2;
-            center.position.z = 0.13;
-            g.add(center);
+            // Aiguilles
+            const hm = M(c.body, 0.6, 0.3);
+            const h1 = new THREE.Mesh(new THREE.BoxGeometry(0.045, 0.32, 0.045), hm);
+            h1.position.set(-0.05, 0.13, 0.15); g.add(h1);
+            const h2 = new THREE.Mesh(new THREE.BoxGeometry(0.035, 0.44, 0.035), hm);
+            h2.position.set(0.06, 0.19, 0.15); g.add(h2);
+            const h3 = new THREE.Mesh(new THREE.BoxGeometry(0.022, 0.48, 0.022), M('#e63946', 0.3, 0.5));
+            h3.position.z = 0.155; g.add(h3);
+            // Centre
+            const cc = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 0.07, 16), M(c.body, 0.7, 0.2));
+            cc.rotation.x = Math.PI / 2; cc.position.z = 0.15; g.add(cc);
 
-            watchObj = g;
-            scene3D.add(g);
+            wObj = g; scene.add(g);
+        }
+        buildWatch(WATCHES[0]);
+
+        // ── RESIZE ──
+        let AW = 480, AH = 640;
+        function resize() {
+            const wrap = document.getElementById('arWrap');
+            AW = wrap.clientWidth; AH = wrap.clientHeight;
+            rdr.setSize(AW, AH);
+            cam3.aspect = AW / AH; cam3.updateProjectionMatrix();
+        }
+        window.addEventListener('resize', resize);
+        setTimeout(resize, 80);
+
+        // ── MEDIAPIPE → SCÈNE 3D ──
+        // Pour caméra arrière (environment) : pas de miroir CSS
+        // x MediaPipe va de gauche (0) à droite (1), caméra arrière = pas inversé
+        function lmTo3d(lm, front) {
+            const aspect = AW / AH;
+            const x = front ? (0.5 - lm.x) * aspect * 4 : (lm.x - 0.5) * aspect * 4;
+            const y = (0.5 - lm.y) * 4;
+            const z = -lm.z * 5;
+            return { x, y, z };
         }
 
-        buildWatch3D(WATCHES[0]);
+        const hands = new Hands({ locateFile: f => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${f}` });
+        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.7, minTrackingConfidence: 0.55 });
 
-        const video = document.getElementById('video');
-        const statusDot = document.getElementById('status-dot');
-        const statusText = document.getElementById('status-text');
-        const loadingOverlay = document.getElementById('loading-overlay');
-        const loadingText = document.getElementById('loading-text');
-
-        let arWidth = 540, arHeight = 720;
-        let currentFacing = 'environment';
-
-        function resizeRenderer() {
-            const wrap = document.getElementById('arWrapper');
-            arWidth = wrap.clientWidth;
-            arHeight = wrap.clientHeight;
-            renderer3D.setSize(arWidth, arHeight);
-            camera3D.aspect = arWidth / arHeight;
-            camera3D.updateProjectionMatrix();
-        }
-        window.addEventListener('resize', resizeRenderer);
-        setTimeout(resizeRenderer, 100);
-
-        function mpToScene(lm, w, h, isFront) {
-            const x = isFront ? (0.5 - lm.x) * (w / h) * 3.5 : (lm.x - 0.5) * (w / h) * 3.5;
-            const y = (0.5 - lm.y) * 3.5;
-            return { x, y, z: -lm.z * 4 };
-        }
-
-        const hands = new Hands({
-            locateFile: file => `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`
-        });
-        hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.65, minTrackingConfidence: 0.5 });
-
-        let lastLandmarks = null;
-
-        hands.onResults(results => {
-            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                lastLandmarks = results.multiHandLandmarks[0];
-                statusDot.classList.add('detected');
-                statusText.textContent = '⌚ Montre placée sur votre poignet';
+        let lms = null;
+        hands.onResults(r => {
+            if (r.multiHandLandmarks && r.multiHandLandmarks.length > 0) {
+                lms = r.multiHandLandmarks[0];
+                document.getElementById('dot').classList.add('on');
+                document.getElementById('msg').textContent = '⌚ Montre sur votre poignet';
             } else {
-                lastLandmarks = null;
-                statusDot.classList.remove('detected');
-                statusText.textContent = 'Montrez votre poignet à la caméra';
+                lms = null;
+                document.getElementById('dot').classList.remove('on');
+                document.getElementById('msg').textContent = 'Montrez votre poignet à la caméra';
             }
         });
 
-        function animate() {
-            requestAnimationFrame(animate);
+        // ── ANIMATION ──
+        function tick() {
+            requestAnimationFrame(tick);
 
-            if (watchObj && currentWatchIndex !== lastBuiltIndex) {
-                lastBuiltIndex = currentWatchIndex;
-                buildWatch3D(WATCHES[currentWatchIndex]);
+            if (curIdx !== lastIdx) { lastIdx = curIdx; buildWatch(WATCHES[curIdx]); }
+
+            if (lms && wObj) {
+                const front = curFacing === 'user';
+                const W = lmTo3d(lms[0], front);   // poignet
+                const I = lmTo3d(lms[5], front);   // index MCP
+                const P = lmTo3d(lms[17], front);  // auriculaire MCP
+                const M = lmTo3d(lms[9], front);   // majeur MCP
+
+                // Position : entre poignet et base des doigts (30% vers les doigts)
+                wObj.position.set(
+                    W.x * 0.7 + M.x * 0.3,
+                    W.y * 0.7 + M.y * 0.3,
+                    W.z * 0.7 + M.z * 0.3
+                );
+
+                // Taille selon largeur du poignet
+                const pw = Math.hypot(I.x - P.x, I.y - P.y);
+                const sc = Math.max(0.2, Math.min(1.4, pw * 1.05));
+                wObj.scale.setScalar(sc);
+
+                // Rotation : axe poignet → doigts
+                const dx = M.x - W.x, dy = M.y - W.y;
+                wObj.rotation.set(Math.PI / 2, 0, Math.atan2(dy, dx) - Math.PI / 2);
+
+                // Tilt latéral selon inclinaison de la main
+                const tilt = (lms[5].y - lms[17].y) * 1.8;
+                wObj.rotation.y = front ? tilt : -tilt;
+
+                // Aiguille des secondes
+                const sh = wObj.children[7];
+                if (sh) sh.rotation.z = -(Date.now() / 1000 % 60) * (Math.PI * 2 / 60);
+
+                wObj.visible = true;
+            } else if (wObj) {
+                wObj.visible = false;
             }
 
-            if (lastLandmarks && watchObj) {
-                const lms = lastLandmarks;
-                const w = arWidth, h = arHeight;
-                const isFront = currentFacing === 'user';
-
-                const wrist = mpToScene(lms[0], w, h, isFront);
-                const index = mpToScene(lms[5], w, h, isFront);
-                const pinky = mpToScene(lms[17], w, h, isFront);
-                const mid = mpToScene(lms[9], w, h, isFront);
-
-                const px = wrist.x * 0.75 + mid.x * 0.25;
-                const py = wrist.y * 0.75 + mid.y * 0.25;
-                const pz = wrist.z * 0.75 + mid.z * 0.25;
-                watchObj.position.set(px, py, pz);
-
-                const bw = Math.hypot(index.x - pinky.x, index.y - pinky.y);
-                const scale = Math.max(0.25, Math.min(1.2, bw * 0.9));
-                watchObj.scale.set(scale, scale, scale);
-
-                const dx = mid.x - wrist.x;
-                const dy = mid.y - wrist.y;
-                watchObj.rotation.set(Math.PI / 2, 0, Math.atan2(dy, dx) - Math.PI / 2);
-
-                const tilt = (lms[5].y - lms[17].y) * 1.5;
-                watchObj.rotation.y = isFront ? tilt : -tilt;
-
-                watchObj.visible = true;
-            } else if (watchObj) {
-                watchObj.visible = false;
-            }
-
-            if (watchObj && watchObj.children[5]) {
-                watchObj.children[5].rotation.z = -(Date.now() / 1000 % 60) * (Math.PI * 2 / 60);
-            }
-
-            renderer3D.render(scene3D, camera3D);
+            rdr.render(scene, cam3);
         }
-        animate();
+        tick();
 
-        let currentStream = null;
-        let mpCamera = null;
+        // ── CAMÉRA ──
+        let curFacing = 'environment', curStream = null, mpCam = null;
+        const vid = document.getElementById('video');
 
-        async function startCamera(facingMode) {
-            if (mpCamera) { try { mpCamera.stop(); } catch (e) { } mpCamera = null; }
-            if (currentStream) { currentStream.getTracks().forEach(t => t.stop()); currentStream = null; }
+        async function startCam(facing) {
+            if (mpCam) { try { mpCam.stop(); } catch (e) { } mpCam = null; }
+            if (curStream) { curStream.getTracks().forEach(t => t.stop()); curStream = null; }
 
-            loadingOverlay.style.display = 'flex';
-            loadingText.textContent = 'Connexion caméra…';
+            document.getElementById('loadBox').style.display = 'flex';
+            document.getElementById('loadTxt').textContent = 'Connexion caméra…';
 
             try {
                 let stream;
                 try {
                     stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode: { exact: facingMode }, width: { ideal: 1280 }, height: { ideal: 720 } },
-                        audio: false
+                        video: { facingMode: { exact: facing }, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false
                     });
                 } catch (e) {
                     stream = await navigator.mediaDevices.getUserMedia({
-                        video: { facingMode, width: { ideal: 1280 }, height: { ideal: 720 } },
-                        audio: false
+                        video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 720 } }, audio: false
                     });
                 }
 
-                video.srcObject = stream;
-                currentStream = stream;
-                video.style.transform = facingMode === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+                vid.srcObject = stream; curStream = stream;
+                // Miroir uniquement pour caméra frontale
+                vid.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
 
-                await new Promise(res => { video.onloadedmetadata = res; setTimeout(res, 3000); });
-                await video.play();
-                resizeRenderer();
+                await new Promise(res => { vid.onloadedmetadata = res; setTimeout(res, 3000); });
+                await vid.play();
+                resize();
 
-                mpCamera = new Camera(video, {
-                    onFrame: async () => { await hands.send({ image: video }); },
+                mpCam = new Camera(vid, {
+                    onFrame: async () => { await hands.send({ image: vid }); },
                     width: 1280, height: 720
                 });
-                await mpCamera.start();
+                await mpCam.start();
 
-                loadingOverlay.style.display = 'none';
-                currentFacing = facingMode;
+                document.getElementById('loadBox').style.display = 'none';
+                curFacing = facing;
                 return true;
             } catch (err) {
-                console.error('Erreur caméra', err);
-                loadingOverlay.style.display = 'none';
+                console.error(err);
+                document.getElementById('loadBox').style.display = 'none';
                 return false;
             }
         }
 
-        document.getElementById('switchBtn').addEventListener('click', async () => {
-            const next = currentFacing === 'environment' ? 'user' : 'environment';
-            const ok = await startCamera(next);
-            if (!ok) await startCamera(currentFacing);
-        });
+        // Bouton switch caméra
+        document.getElementById('switchBtn').onclick = async () => {
+            const next = curFacing === 'environment' ? 'user' : 'environment';
+            const ok = await startCam(next);
+            if (!ok) await startCam(curFacing);
+        };
 
-        const startScreen = document.getElementById('start-screen');
-        const startBtn = document.getElementById('start-btn');
-        const startError = document.getElementById('start-error');
+        // Bouton démarrer
+        document.getElementById('startBtn').onclick = async () => {
+            const btn = document.getElementById('startBtn');
+            const err = document.getElementById('startErr');
+            err.textContent = ''; btn.textContent = 'Connexion…'; btn.disabled = true;
 
-        startBtn.addEventListener('click', async () => {
-            startError.textContent = '';
-            startBtn.textContent = 'Connexion…';
-            startBtn.disabled = true;
-
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-                startError.textContent = '⚠️ Utilisez Chrome ou Safari récent.';
-                startBtn.textContent = 'Activer la caméra';
-                startBtn.disabled = false;
-                return;
+            if (!navigator.mediaDevices?.getUserMedia) {
+                err.textContent = '⚠️ Utilisez Chrome ou Safari récent.';
+                btn.textContent = 'Démarrer'; btn.disabled = false; return;
             }
 
-            let ok = await startCamera('environment');
-            if (!ok) ok = await startCamera('user');
+            // Priorité caméra ARRIÈRE
+            let ok = await startCam('environment');
+            if (!ok) ok = await startCam('user');
 
             if (ok) {
-                startScreen.classList.add('hidden');
+                document.getElementById('startBox').classList.add('gone');
             } else {
-                startError.textContent = '❌ Permission refusée. Autorisez la caméra dans les paramètres.';
-                startBtn.textContent = 'Réessayer';
-                startBtn.disabled = false;
+                err.textContent = '❌ Permission refusée. Autorisez la caméra dans les paramètres Chrome.';
+                btn.textContent = 'Réessayer'; btn.disabled = false;
             }
-        });
+        };
     </script>
 </body>
 
