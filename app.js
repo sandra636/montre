@@ -4,9 +4,9 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 // ======= CONFIGURATION =======
 // ⬇️ REMPLACEZ ICI par le chemin de VOTRE fichier .glb (dossier models/)
 const MODELS_3D = [
-    './models/votre_montre.glb',   // Bouton 1
-    './models/votre_montre.glb',   // Bouton 2 (même modèle ou différent)
-    './models/votre_montre.glb'    // Bouton 3
+    './models/montre1.glb',
+    './models/montre1.glb',
+    './models/montre1.glb'
 ];
 // =============================
 
