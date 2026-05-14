@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 // ======= CONFIGURATION =======
-// ⬇️ REMPLACEZ ICI par le chemin de VOTRE fichier .glb (dossier models/)
+// ⬇️ Chemin de VOTRE fichier .glb (dossier models/)
 const MODELS_3D = [
-    './models/montre1.glb',
-    './models/montre1.glb',
-    './models/montre1.glb'
+    './models/montre1.glb',   // Bouton 1
+    './models/montre1.glb',   // Bouton 2
+    './models/montre1.glb'    // Bouton 3
 ];
 // =============================
 
@@ -43,7 +43,7 @@ function initThree() {
     loader = new GLTFLoader();
 }
 
-// Chargement d'un modèle 3D (remplace l'ancien)
+// Chargement d'un modèle 3D
 function loadWatch(modelPath) {
     if (watchGroup) {
         scene.remove(watchGroup);
@@ -69,7 +69,7 @@ function loadWatch(modelPath) {
     });
 }
 
-// Positionner la montre sur le poignet (MediaPipe fournit les landmarks)
+// Positionner la montre sur le poignet
 function updateWatchPosition(landmarks) {
     if (!watchGroup) return;
     
@@ -129,10 +129,12 @@ hands.onResults((results) => {
     renderer.render(scene, camera);
 });
 
-// Démarrer la caméra
+// Démarrer la caméra (version corrigée pour caméra arrière)
 async function initCamera() {
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: { exact: "environment" } } 
+        });
         video.srcObject = stream;
         await video.play();
         
@@ -148,8 +150,25 @@ async function initCamera() {
         loadingDiv.style.display = 'none';
         statusDiv.textContent = '👋 Montrez votre poignet';
     } catch (err) {
-        loadingDiv.innerHTML = `❌ Erreur caméra : ${err.message}`;
-        console.error(err);
+        console.error('Erreur caméra:', err);
+        // Fallback : si caméra arrière échoue, on prend la caméra par défaut
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            await video.play();
+            const cameraUtils = new Camera(video, {
+                onFrame: async () => {
+                    await hands.send({ image: video });
+                },
+                width: 1280,
+                height: 720
+            });
+            await cameraUtils.start();
+            loadingDiv.style.display = 'none';
+            statusDiv.textContent = '👋 Montrez votre poignet';
+        } catch (fallbackErr) {
+            loadingDiv.innerHTML = `❌ Erreur caméra : ${fallbackErr.message}`;
+        }
     }
 }
 
@@ -174,7 +193,7 @@ function init() {
     initThree();
     animate();
     initCamera();
-    // Charger le premier modèle après un court délai (attendre le loader)
+    // Charger le premier modèle après un court délai
     setTimeout(() => {
         if (MODELS_3D[0]) loadWatch(MODELS_3D[0]);
     }, 1000);
